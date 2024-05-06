@@ -1,6 +1,7 @@
 package org.mycompany.servimark.auditoria;
 
-public interface AuditoriaInternalAPI {
+import org.mycompany.servimark.auditoria.model.Auditoria;
 
-    
+public interface AuditoriaInternalAPI {
+    Auditoria createAuditoria(Auditoria auditoria);
 }
