@@ -18,7 +18,7 @@ import jakarta.validation.constraints.NotNull;
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public record ServiceDTO(
     String id,
-    // @NotBlank(message = "El estado del servicio no puede estar vacio")
+    @NotBlank(message = "El estado del servicio no puede estar vacio")
     ServiceStatus serviceStatus,
     @NotBlank(message = "El nombre del servicio no puede estar vacio ")
     String name,
@@ -26,13 +26,13 @@ public record ServiceDTO(
     String description,
     @NotBlank (message = "El precio no puede estar vacio")
     BigDecimal price,
-    // @NotBlank (message = "La categoria no puede estar vacia")
+    @NotBlank (message = "La categoria no puede estar vacia")
     Category category,
-    // @NotBlank(message = "El municipio no debe estar vacio")
+    @NotBlank(message = "El municipio no debe estar vacio")
     Municipality municipality,
-    // @NotNull(message = "El usuario no debe estar vacio")
+    @NotNull(message = "El usuario no debe estar vacio")
     User user,
-    // @NotBlank(message = "La lista de imagenes no debe estar vacia")
+    @NotBlank(message = "La lista de imagenes no debe estar vacia")
     List<ImageService> images
     ) {
 }

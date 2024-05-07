@@ -6,6 +6,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import org.mycompany.servimark.auditoria.AuditoriaDTO;
 import org.mycompany.servimark.auditoria.AuditoriaInternalAPI;
 import org.mycompany.servimark.auditoria.model.Auditoria;
 import org.mycompany.servimark.service.ServiceDTO;
@@ -29,6 +30,7 @@ public class ServiceManagement implements ServiceInternalAPI, ServiceExternalAPI
     private final UserServiceRepository userServiceRepository;
     private final ServiceMapper serviceMapper;
     private final AuditoriaInternalAPI auditoriaInternalAPI;
+    private int contErrors = 0;
 
     public ServiceManagement(ServiceRepository serviceRepository, ServiceMapper serviceMapper, UserServiceRepository userServiceRepository, AuditoriaInternalAPI auditoriaInternalAPI) {
         this.serviceMapper = serviceMapper;
@@ -69,16 +71,18 @@ public class ServiceManagement implements ServiceInternalAPI, ServiceExternalAPI
             map.put("message", "Servicio guardado exitosamente");
             return new ResponseEntity<>(map, HttpStatus.CREATED);
         } catch (Exception e) {
-            
-            Auditoria auditoria = new Auditoria();
-            auditoria.setDescripcion(e.getMessage());
-            LocalDate fechaActual = LocalDate.now();
-            auditoria.setFecha(fechaActual);
-            auditoriaInternalAPI.createAuditoria(auditoria);
-            // Response
-            map.put("status", "false");
-            map.put("message", "Error al guardar el servicio");
-            return new ResponseEntity<>(map, HttpStatus.INTERNAL_SERVER_ERROR);
+            contErrors++;
+            if(contErrors >= 3){
+                AuditoriaDTO auditoria = new AuditoriaDTO(null, e.getMessage(), null);
+                try {
+                    auditoriaInternalAPI.createAuditoria(auditoria);
+                } catch (Exception ex) {
+                    auditoriaInternalAPI.createAuditoriaToTxt(auditoria);
+                }
+            }
         }
+        map.put("status", "false");
+        map.put("message", "Error al guardar el servicio");
+        return new ResponseEntity<>(map, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
